@@ -1,0 +1,12 @@
+# First Purchase Domain in GoDaddy Register 
+rapakakarthik.shop
+
+# Create CloudFlare Account & Add Site to CloudFlare
+
+# Copy CloudFlare Nameservers to GoDaddy
+
+# Copy the EC2 public Ip and map to Domain name on CloudFlare
+
+# Add Cloud Flare Records A & CNAME(subdomain) & AAAA (OPTIONAL)
+
+# wait for propagation check you domain name into # whatsmydns/nslookup
