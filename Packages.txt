@@ -1,0 +1,176 @@
+# Install LAMP stack
+
+
+# Update the Server 
+sudo apt update -y && sudo apt upgrade -y
+
+
+# Install Apache2
+sudo apt install apache2 -y
+sudo systemctl start apache2          # Start the apache2
+sudo systemctl status apache2         # Check the status of apache2 (active or inactive)
+sudo systemctl enable apache2
+apache2 -v                            # check the version of apache2
+
+
+# check the apache default page on browser with public IP 
+Create index.html on Document root path 
+/var/www/html/index.html
+Test 
+http://<IPADDRESS>
+
+
+# Install MYSQL
+sudo apt install mysql-server -y
+sudo systemctl start mysql
+sudo systemctl status mysql
+mysql --version
+
+
+# Install PHP
+sudo apt install php libapache2-mod-php php-mysql -y   # php run time & php connector 
+php -v
+
+
+# Check the PHP default page on browser with public ip address
+create info.php on Document Root path
+/var/www/html/info.php
+
+
+```php
+<?php
+phpinfo();
+?>
+```
+
+
+# Remove index.html & info.php
+sudo rm -rf index.html
+sudo rm -rf info.php
+
+
+# Create 2 Directories for Main domain and Subdomain
+sudo mkdir -p /var/www/html/rapakakarthik.shop
+sudo mkdir -p /var/www/html/wp.rapakakarthik.shop
+
+# set permissions 
+sudo chown -R $USER:$USER /var/www/html/rapakakarthik.shop
+sudo chown -R $USER:$USER /var/www/html/wp.rapakakarthik.shop
+
+1) Main Domain: rapakakarthik.shop
+# Create an index.html file in the main domain directory:
+
+File: /var/www/html/rapakakarthik.shop/index.html
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome to Rapakakarthik Shop</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin-top: 50px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Welcome to Rapakakarthik Shop!</h1>
+    <p>Your one-stop shop for everything amazing.</p>
+</body>
+</html>
+
+
+
+2) Subdomain: wp.rapakakarthik.shop
+# Create an index.html file in the subdomain directory:
+
+File: /var/www/html/wp.rapakakarthik.shop/index.html
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome to WP Rapakakarthik Shop</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin-top: 50px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Welcome to WP Rapakakarthik Shop!</h1>
+    <p>This is the WordPress subdomain.</p>
+</body>
+</html>
+
+
+# Create Virtual Host Configuration Files
+
+Create a configuration file for the main domain:rapakakarthik.shop
+sudo vi /etc/apache2/sites-available/rapakakarthik.shop.conf
+
+# Add the following content: in rapakakarthik.shop.conf
+
+<VirtualHost *:80>
+    ServerAdmin admin@rapakakarthik.shop
+    ServerName rapakakarthik.shop
+    ServerAlias www.rapakakarthik.shop
+    DocumentRoot /var/www/rapakakarthik.shop
+
+    <Directory /var/www/rapakakarthik.shop>
+        AllowOverride All
+        Require all granted
+    </Directory>
+
+    ErrorLog ${APACHE_LOG_DIR}/rapakakarthik.shop-error.log
+    CustomLog ${APACHE_LOG_DIR}/rapakakarthik.shop-access.log combined
+</VirtualHost>
+
+
+Create a configuration file for the subdomain:
+sudo vi /etc/apache2/sites-available/wp.rapakakarthik.shop.conf
+
+# Add the following content: in wp.rapakakarthik.shop.conf
+
+<VirtualHost *:80>
+    ServerAdmin admin@rapakakarthik.shop
+    ServerName wp.rapakakarthik.shop
+    DocumentRoot /var/www/wp.rapakakarthik.shop
+
+    <Directory /var/www/wp.rapakakarthik.shop>
+        AllowOverride All
+        Require all granted
+    </Directory>
+
+    ErrorLog ${APACHE_LOG_DIR}/wp.rapakakarthik.shop-error.log
+    CustomLog ${APACHE_LOG_DIR}/wp.rapakakarthik.shop-access.log combined
+</VirtualHost>
+
+# Enable the Virtual Hosts
+sudo a2ensite rapakakarthik.shop.conf
+sudo a2ensite wp.rapakakarthikk.shop.conf
+
+# Disable the Default site 
+sudo a2dissite 000-default.conf
+
+# Test Apache Configuration
+sudo apachectl configtest
+
+# Reload Apache
+sudo systemctl restart apache2
+
+
+Test the Domain on browser
+
+Main Domain
+http://rapakakarthik.shop
+
+Subdomain 
+http://wp.rapakakarthik.sho
